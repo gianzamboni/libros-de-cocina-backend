@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum BookType {
+  Dulce
+  Salado
+  Mixto
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String? // null when the owner only uses Google sign-in
+  googleSub    String?  @unique // Google account subject id, set on first Google login
+  createdAt    DateTime @default(now())
+}
+
+model Book {
+  id          String   @id @default(cuid())
+  title       String
+  author      String
+  type        BookType
+  currentPage Int      @default(0)
+  totalPages  Int
+  coverImage  String? // filename on the volume
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  recipes     Recipe[]
+}
+
+model Recipe {
+  id        String   @id @default(cuid())
+  bookId    String
+  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  name      String
+  page      Int
+  score     Int? // 1-10, null = sin cocinar
+  comment   String?
+  type      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([bookId])
+}
