@@ -16,7 +16,9 @@ services:
       retries: 10
 
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
     env_file:
       - .env
     environment:
