@@ -13,6 +13,10 @@ import { statsRouter } from "./modules/stats/stats.routes.js";
 export function createApp() {
   const app = express();
 
+  // Railway terminates TLS at an edge proxy and forwards X-Forwarded-For;
+  // trust that single hop so express-rate-limit can read the real client IP.
+  app.set("trust proxy", 1);
+
   app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
   app.use(cors({ origin: env.CORS_ORIGIN, credentials: true }));
   app.use(express.json({ limit: "1mb" }));
